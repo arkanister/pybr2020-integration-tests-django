@@ -1,0 +1,30 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+
+# Unit test / coverage reports:
+cover/
+.tox/
+.coverage
+.cache
+nosetests.xml
+coverage.xml
+
+# IDE:
+obj/
+bin/
+.idea/
+.vscode/
+.vs/
+.DS_Store/
+*.pyproj
+*.pyproj.user
+*.sln
+
+# Django stuff:
+src/static/
+*.sqlite
+.env
+
+# Pip:
+Pipfile.lock

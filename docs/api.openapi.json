@@ -1,0 +1,929 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "PyBR 2020",
+    "description": "Testes de Integração com Python/Django",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https"
+    }
+  ],
+  "paths": {
+    "/api/auth/sign-up/": {
+      "post": {
+        "description": "Cria uma nova conta.",
+        "tags": ["Auth"],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {"type": "string", "example": "John Doe"},
+                  "email": {"type": "string", "format": "email", "example": "john.doe@example.com"},
+                  "password": {"type": "string", "example": "#StrongPassword1"},
+                  "password_confirm": {"type": "string", "example": "#StrongPassword1"}
+                },
+                "required": ["name", "email", "password", "password_confirm"],
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Token"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Dados Inválidos",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequestError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/auth/sign-in/": {
+      "post": {
+        "description": "Efetua login com email e senha.",
+        "tags": ["Auth"],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {"type": "string", "format": "email", "example": "john.doe@example.com"},
+                  "password": {"type": "string", "example": "#StrongPassword1"}
+                },
+                "required": ["email", "password"],
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Token"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Dados Inválidos",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequestError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/categories/": {
+      "post": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "description": "Cria uma nova categoria para o usuário.",
+        "tags": ["Categorias"],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {"type": "string", "example": "Places"}
+                },
+                "required": ["name"],
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Category"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Dados Inválidos",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequestError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token de Autenticação Inválido",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "description": "Lista as categorias do usuário.",
+        "tags": ["Categorias"],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "count": {"type": "integer", "example": 1},
+                    "previous": {"type": "string", "format": "uri", "example": null},
+                    "next": {"type": "string", "format": "uri", "example": null},
+                    "results": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Category"
+                      }
+                    }
+                  },
+                  "required": ["count", "previous", "next", "results"],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token de Autenticação Inválido",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/categories/{id}/": {
+      "put": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "description": "Altera os dados da categoria do usuário.",
+        "tags": ["Categorias"],
+        "parameters": [{
+          "in": "path",
+          "name": "id",
+          "description": "Identificador da Categoria",
+          "schema": {
+            "type": "integer"
+          },
+          "required": true
+        }],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {"type": "string", "example": "Places"}
+                },
+                "required": ["name"],
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Category"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Dados Inválidos",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequestError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token de Autenticação Inválido",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Não Encontrado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFoundError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "description": "Retorna os datalhes de uma categoria do usuário.",
+        "tags": ["Categorias"],
+        "parameters": [{
+          "in": "path",
+          "name": "id",
+          "description": "Identificador da Categoria",
+          "schema": {
+            "type": "integer"
+          },
+          "required": true
+        }],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Category"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token de Autenticação Inválido",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Não Encontrado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFoundError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "description": "Remove uma categoria do usuário.",
+        "tags": ["Categorias"],
+        "parameters": [{
+          "in": "path",
+          "name": "id",
+          "description": "Identificador da Categoria",
+          "schema": {
+            "type": "integer"
+          },
+          "required": true
+        }],
+        "responses": {
+          "204": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Token de Autenticação Inválido",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Não Encontrado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFoundError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/notes/": {
+      "post": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "description": "Cria uma nota para o usuário.",
+        "tags": ["Notas"],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "title": {"type": "string", "example": "Top 10 Places to Visit"},
+                  "content": {"type": "string", "example": "Praesent sapien massa, convallis a pellentesque nec, egestas non nisi. Sed porttitor lectus nibh. Nulla porttitor accumsan tincidunt. Nulla quis lorem ut libero malesuada feugiat."},
+                  "category": {"type": "integer", "example": 1, "nullable": true}
+                },
+                "required": ["title", "content", "category"],
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Note"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Dados Inválidos",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequestError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token de Autenticação Inválido",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "description": "Lista as notas do usuário.",
+        "tags": ["Notas"],
+        "parameters": [{
+          "in": "query",
+          "name": "category",
+          "description": "Identificador da Categoria",
+          "schema": {
+            "type": "integer"
+          },
+          "required": false
+        }, {
+          "in": "query",
+          "name": "archived",
+          "description": "Flag de Arquivado",
+          "schema": {
+            "type": "boolean"
+          },
+          "required": false
+        }],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "count": {"type": "integer", "example": 1},
+                    "previous": {"type": "string", "format": "uri", "example": null},
+                    "next": {"type": "string", "format": "uri", "example": null},
+                    "results": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Note"
+                      }
+                    }
+                  },
+                  "required": ["count", "previous", "next", "results"],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token de Autenticação Inválido",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/notes/{id}/": {
+      "put": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "description": "Altera os dados de uma nota do usuário.",
+        "tags": ["Notas"],
+        "parameters": [{
+          "in": "path",
+          "name": "id",
+          "description": "Identificador da Nota",
+          "schema": {
+            "type": "integer"
+          },
+          "required": true
+        }],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "title": {"type": "string", "example": "Top 10 Places to Visit"},
+                  "content": {"type": "string", "example": "Praesent sapien massa, convallis a pellentesque nec, egestas non nisi. Sed porttitor lectus nibh. Nulla porttitor accumsan tincidunt. Nulla quis lorem ut libero malesuada feugiat."},
+                  "category": {"type": "integer", "example": 1, "nullable": true}
+                },
+                "required": ["title", "content", "category"],
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Note"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Dados Inválidos",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequestError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token de Autenticação Inválido",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Não Encontrado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFoundError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "description": "Altera parcialmente os dados de uma nota do usuário.",
+        "tags": ["Notas"],
+        "parameters": [{
+          "in": "path",
+          "name": "id",
+          "description": "Identificador da Nota",
+          "schema": {
+            "type": "integer"
+          },
+          "required": true
+        }],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "title": {"type": "string", "example": "Top 10 Places to Visit"}
+                },
+                "required": ["title"],
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Note"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Dados Inválidos",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequestError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token de Autenticação Inválido",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Não Encontrado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFoundError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "description": "Retorna os detalhes de uma nota do usuário.",
+        "tags": ["Notas"],
+        "parameters": [{
+          "in": "path",
+          "name": "id",
+          "description": "Identificador da Nota",
+          "schema": {
+            "type": "integer"
+          },
+          "required": true
+        }],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Note"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token de Autenticação Inválido",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Não Encontrado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFoundError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "description": "Remove uma nota do usuário.",
+        "tags": ["Notas"],
+        "parameters": [{
+          "in": "path",
+          "name": "id",
+          "description": "Identificador da Nota",
+          "schema": {
+            "type": "integer"
+          },
+          "required": true
+        }],
+        "responses": {
+          "204": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Token de Autenticação Inválido",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Não Encontrado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFoundError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/notes/{id}/archive/": {
+      "put": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "description": "Arquiva uma nota do usuário.",
+        "tags": ["Notas"],
+        "parameters": [{
+          "in": "path",
+          "name": "id",
+          "description": "Identificador da Nota",
+          "schema": {
+            "type": "integer"
+          },
+          "required": true
+        }],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "title": {"type": "string", "example": "Top 10 Places to Visit"},
+                  "content": {"type": "string", "example": "Praesent sapien massa, convallis a pellentesque nec, egestas non nisi. Sed porttitor lectus nibh. Nulla porttitor accumsan tincidunt. Nulla quis lorem ut libero malesuada feugiat."},
+                  "category": {"type": "integer", "example": 1, "nullable": true}
+                },
+                "required": ["title", "content", "category"],
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Note"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Dados Inválidos",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequestError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token de Autenticação Inválido",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Não Encontrado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFoundError"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer"
+      }
+    },
+    "schemas": {
+      "Category": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "example": 1
+          },
+          "name": {
+            "type": "string",
+            "example": "Places"
+          }
+        },
+        "required": ["id", "name"],
+        "additionalProperties": false
+      },
+      "Note": {
+        "type": "object",
+        "properties": {
+          "id": {"type": "integer", "example": 1},
+          "title": {"type": "string", "example": "Top 10 Places to Visit"},
+          "content": {"type": "string", "example": "Praesent sapien massa, convallis a pellentesque nec, egestas non nisi. Sed porttitor lectus nibh. Nulla porttitor accumsan tincidunt. Nulla quis lorem ut libero malesuada feugiat."},
+          "category": {
+            "$ref": "#/components/schemas/Category"
+          },
+          "archived": {"type": "boolean", "example": false},
+          "created_at": {"type": "string", "format": "date-time", "example": "2020-01-01T12:00:00.000000-03:00"},
+          "last_update": {"type": "string", "format": "date-time", "example": "2020-01-01T12:00:00.000000-03:00"}
+        },
+        "required": ["id", "title", "content", "category", "archived", "created_at", "last_update"],
+        "additionalProperties": false
+      },
+      "Token": {
+        "type": "object",
+        "properties": {
+          "user": {
+            "$ref": "#/components/schemas/User"
+          },
+          "token": {
+            "type": "string",
+            "example": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJqb2huLmRvZUBleGFtcGxlLmNvbSIsImlhdCI6MTYwMzIyMjkxNSwiZXhwIjoxNjAzMjI2NTE1fQ.ovvKlHA5oZJ1Q6smx82zGX6sFL6z-TBhDCemydtMCAU"
+          },
+          "token_expiration_date": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2020-01-01T12:00:00.000000-03:00"
+          }
+        },
+        "required": ["user", "token", "token_expiration_date"],
+        "additionalProperties": false
+      },
+      "User": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "example": 1
+          },
+          "name": {
+            "type": "string",
+            "example": "John Doe"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "example": "john.doe@example.com"
+          }
+        },
+        "required": ["id", "name", "email"],
+        "additionalProperties": false
+      },
+      "BadRequestError": {
+        "type": "object",
+        "properties": {
+          "field_name": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "example": "Este campo é obrigatório!"
+            }
+          }
+        },
+        "additionalProperties": true
+      },
+      "UnauthorizedError": {
+        "type": "object",
+        "properties": {
+          "detail": {
+            "type": "string",
+            "example": "As credenciais de autenticação não foram fornecidas."
+          }
+        },
+        "additionalProperties": false
+      },
+      "NotFoundError": {
+        "type": "object",
+        "properties": {
+          "detail": {
+            "type": "string",
+            "example": "Não encontrado."
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  }
+}
