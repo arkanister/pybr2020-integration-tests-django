@@ -21,7 +21,7 @@ jobs:
         with:
           python-version: '3.8'
       - name: Install Requirements
-        run: pip install -r requirements.pip && pip install -r requirements-dev.pip
+        run: pip install -r requirements.pip && pip install -r requirements.dev.pip
       - name: Run Migrations
         run: python src/manage.py migrate --settings=settings.tests --noinput
       - name: Run Tests
