@@ -23,6 +23,6 @@ jobs:
       - name: Install Requirements
         run: pip install -r requirements.pip && pip install -r requirements.dev.pip
       - name: Run Migrations
-        run: python src/manage.py migrate --settings=settings.tests --noinput
+        run: python src/manage.py migrate --noinput
       - name: Run Tests
-        run: python src/manage.py test apps --settings=settings.tests --verbosity=2 --noinput
+        run: python src/manage.py test notes --verbosity=2 --noinput
